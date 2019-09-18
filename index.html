@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>CORY!</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <style type="text/css">
+            @keyframes bigsmallrotate {
+                0% { height: 100px; }
+                50% { height: 500px; }
+                100% { height: 100px; transform: rotate(360deg); }
+            }
+            @keyframes movefromtop {
+                0% {margin-top: -500px;}
+                100% {margin-top: 0;}
+            }
+            html {
+                height: 100%;
+            }
+            body {
+                background-image: url("whitehouse.jpg");
+                background-repeat: no-repeat;
+                background-position: center;
+                background-attachment: fixed;
+                overflow: hidden;
+                text-align: center;
+            }
+            .bigtext {
+                color: red;
+                text-shadow:
+                    -2px -2px 0 #000,
+                    2px -2px 0 #000,
+                    -2px 2px 0 #000,
+                    2px 2px 0 #000;
+                background-color: yellow;
+                border-radius: 5px;
+                display: inline-block;
+                font-size: 50pt;
+                cursor: pointer;
+            }
+            .bigbox {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                /* bring your own prefixes */
+                transform: translate(-50%, -50%);
+            }
+            #explosion1, #explosion2, #cory {
+                display: none;
+            }
+            #explosion1, #explosion2 {
+                width: 900px;
+                position: absolute;
+            }
+            #explosion1 {
+                bottom: 0;
+                left: 0;
+            }
+            #explosion2 {
+                bottom: 0;
+                right: 0;
+            }
+            #cory {
+                height: 500px;
+                position: fixed;
+            }
+            #cc1 {
+                position: fixed;
+                top: 100px;
+                left: 100px;
+            }
+            #cc2 {
+                position: fixed;
+                top: 200px;
+                left: 200px;
+            }
+            #cc3 {
+                position: fixed;
+                top: 300px;
+                left: 300px;
+            }
+            .cd1 {
+                width: 500px;
+                height: 500px;
+            }
+            #continue {
+                z-index: 10000000;
+                display: none;
+            }
+        </style>
+        <script>
+            var corycalm = false;
+            var allcoryparty = false;
+            function makeNewPosition() {
+                var h = $(window).height() - 50;
+                var w = $(window).width() - 50;
+                var nh = Math.floor(Math.random() * h);
+                var nw = Math.floor(Math.random() * w);
+                return [nh,nw];
+            }
+            function animateCory() {
+                if (!corycalm) {
+                    if (allcoryparty) {
+                        $('.cd').animate({ top: makeNewPosition()[0], left: makeNewPosition()[1] }, function() {
+                            $('.cd').css('animation', '2s bigsmallrotate infinite linear');
+                            animateCory();
+                        });
+                        $('.cd1').animate({ top: makeNewPosition()[0], left: makeNewPosition()[1] }, function() {
+                            $('.cd1').css('animation', '2s bigsmallrotate infinite linear');
+                            animateCory();
+                        });
+                        $('#cory, .cd, .cd1').show();
+                    }
+                    $('#cory').animate({ top: makeNewPosition()[0], left: makeNewPosition()[1] }, function() {
+                        $('#cory').css('animation', '2s bigsmallrotate infinite linear');
+                        animateCory();
+                    });
+                } else {
+                    $('#cory').css('animation', 'none');
+                }
+            };
+            $(document).ready(function() {
+                var corysound = document.createElement('audio');
+                corysound.setAttribute('src', 'cory-house.mp3');
+                var explosionsound = document.createElement('audio');
+                explosionsound.setAttribute('src', 'explode.wav');
+                $('#welcomebox').click(function() {
+                    corysound.play();
+                    explosionsound.play();
+                    $('#welcomebox').hide();
+                    $('#explosion1, #explosion2').show();
+                    $('#cory').show();
+                    $('#cory').css('animation', '2s movefromtop normal linear');
+                    setTimeout(animateCory, 3000);
+                    setTimeout(() => {
+                        corycalm = true;
+                        setTimeout(() => {
+                            corycalm = false;
+                            animateCory();
+                            setTimeout(() => {
+                                $('#cory').hide();
+                                $('body').append($('<img src="cory.png" id="cc1" class="cd" />'));
+                                setTimeout(() => {
+                                    $('body').append($('<img src="cory.png" id="cc2" class="cd" />'));
+                                    setTimeout(() => {
+                                        $('body').append($('<img src="cory.png" id="cc3" class="cd" />'));
+                                        setTimeout(() => {
+                                            $('.cd').hide();
+                                            $('body').append($('<img src="cory1.png" id="cc1" class="cd1" />'));
+                                            setTimeout(() => {
+                                                $('body').append($('<img src="cory2.jpg" id="cc2" class="cd1" />'));
+                                                setTimeout(() => {
+                                                    $('body').append($('<img src="cory3.png" id="cc3" class="cd1" />'));
+                                                    setTimeout(() => {
+                                                        $('.cd, .cd1').hide();
+                                                        $('#cory').show();
+                                                        animateCory();
+                                                        setTimeout(() => {
+                                                            allcoryparty = true;
+                                                            setTimeout(() => {
+                                                                corycalm = true;
+                                                                $('body *').hide();
+                                                                $('#continue, #conttext').show();
+                                                            }, 6500);
+                                                        }, 7000);
+                                                    }, 2000);
+                                                }, 500);
+                                            }, 500);
+                                        }, 3500);
+                                    }, 500);
+                                }, 500);
+                            }, 10000);
+                        }, 3000);
+                    }, 14000);
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <center id="welcomebox" class="bigbox">
+            <h1 id="welcome" class="bigtext">WELCOME CORY TO THE HOUSE.</h1>
+        </center>
+        <img src="explode.gif" id="explosion1" />
+        <img src="explode.gif" id="explosion2" />
+        <img src="cory.png" id="cory" />
+        <center id="continue" class="bigbox">
+            <h1 id="conttext" class="bigtext">I'M YOUR MAN™</h1>
+        </center>
+    </body>
+</html>
